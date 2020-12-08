@@ -1,0 +1,20 @@
+{
+  "rulesFile": "database.rules.json",
+  "hosting": {
+    "site": "iot-solar-power",
+    "public": "public",
+    "ignore": [
+      "firebase.json",
+      "**/.*",
+      "**/node_modules/**"
+    ],
+    "rewrites": [
+      {
+        "source": "**",
+        "destination": "/index.html"
+      }
+    ]
+  }
+}
+
+

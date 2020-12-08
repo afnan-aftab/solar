@@ -1,0 +1,132 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+  <meta http-equiv="x-ua-compatible" content="ie=edge">
+  <meta name="description" content="FYP">
+  <meta name="author" content="Afnan">
+
+  <title>FYP</title>
+
+  <!-- Icon Image -->
+  <link type="image" sizes="32x32"  href="img/mos.png" rel="icon">
+  <!-- Bootstrap core CSS -->
+  <link href="vendor/bootstrap/css/bootstrap.min.css" rel="stylesheet">
+  <link href="css/styles.css" rel="stylesheet">
+
+</head>
+
+<body>
+
+  <nav class = "navbar navbar-dark bg-dark navbar-expand-sm">
+    <div class = "container">
+        <button class = "navbar-toggler" type = "button" data-toggle = "collapse" data-target = "#Navbar">
+            <span class = "navbar-toggler-icon"></span>
+        </button>
+        <a class = "navbar-brand mr-auto" href = "./index.html"><img src="img/mos.png" height="32" width="32"></a>
+        <div class = "collapse navbar-collapse" id = "Navbar">
+            <ul class = "navbar-nav mr-auto">
+                <li class = "nav-item active"><a class = "nav-link" href = "#">Home</a></li>
+                <li class = "nav-item"><a class = "nav-link" href = "#">About</a></li>
+                <li class = "nav-item"><a class = "nav-link" href = "#">Menu</a></li>
+                <li class = "nav-item"><a class = "nav-link" href = "#">Contact</a></li>
+            </ul>
+            <span class="navbar-text">
+                <a id="login">
+                    Login
+                </a>
+            </span>
+        </div>
+    </div>        
+  </nav>
+  <div class="container">
+
+    <div class="table-responsive">
+      <table class="table table-hover">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">Key</th>
+            <th scope="col">Temperature</th>
+            <th scope="col">Ax</th>
+            <th scope="col">Ay</th>
+            <th scope="col">Az</th>
+          </tr>
+        </thead>
+        <tbody id="test">
+          
+        </tbody>
+      </table>
+    </div>
+
+  </div>
+
+  <!-- Footer -->
+<footer class="page-footer font-small bg-dark fixed-bottom footer-dark text-light">
+
+  <!-- Copyright -->
+  <div class="footer-copyright text-center py-3">© 2020 Copyright:
+    <a href="https://www.instagram.com/afnan_aftab/"> Afnan Aftab</a>
+  </div>
+  <!-- Copyright -->
+
+</footer>
+<!-- Footer -->
+
+
+
+<!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
+  <!-- Bootstrap core JavaScript -->
+  <script src="vendor/jquery/jquery.min.js"></script>
+  <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
+  <!-- Firebase App (the core Firebase SDK) is always required and must be listed first -->
+  <script src="/__/firebase/8.1.2/firebase-app.js"></script>
+  <!-- Add the database Firebase JavaScript SDK -->
+  <script  src="/__/firebase/8.1.2/firebase-database.js"></script>
+  <!-- Initialize Firebase -->
+  <script src="index.js"></script>
+<!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
+
+<script>
+  
+var snippet = "<tr><th scope=\"row\">"+"{{KEY}}"+"</th><td>"+"{{TTTT}}"+"</td><td>"+"{{AXXX}}"+"</td><td>"+"{{AYYY}}"+"</td><td>"+"{{AZZZ}}"+"</td></tr>";
+
+function add_row(T,Ax,Ay,Az,key){
+    var h = snippet.replace("{{TTTT}}",T);
+    h = h.replace("{{KEY}}",key);
+    h = h.replace("{{AXXX}}",Ax);
+    h = h.replace("{{AYYY}}",Ay);
+    h = h.replace("{{AZZZ}}",Az);
+    document.getElementById('test').insertAdjacentHTML("beforeend", h);
+}
+
+var query = database.ref('Room1').orderByKey();
+query.once('value', (snapshot) => {
+  snapshot.forEach(function(childSnapshot){
+    var key = childSnapshot.key;
+    var Acx = childSnapshot.val().Ax;
+    var Acy = childSnapshot.val().Ay;
+    var Acz = childSnapshot.val().Az;
+    var T = childSnapshot.val().Temp;
+    
+    add_row(T,Acx,Acy,Acz,key);
+  });
+});
+
+query.limitToLast(1).on('child_added', (childSnapshot) => {
+
+    var key = childSnapshot.key;
+    var Acx = childSnapshot.val().Ax;
+    var Acy = childSnapshot.val().Ay;
+    var Acz = childSnapshot.val().Az;
+    var T = childSnapshot.val().Temp;
+    
+    add_row(T,Acx,Acy,Acz,key);
+ 
+ });
+</script>
+
+</body>
+</html>
