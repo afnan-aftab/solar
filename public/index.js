@@ -15,5 +15,41 @@ console.log(Project.name);
 var database = firebase.database();
 // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
+
+var snippet = "<tr><th scope=\"row\">"+"{{KEY}}"+"</th><td>"+"{{TTTT}}"+"</td><td>"+"{{AXXX}}"+"</td><td>"+"{{AYYY}}"+"</td><td>"+"{{AZZZ}}"+"</td></tr>";
+
+function add_row(T,Ax,Ay,Az,key){
+    var h = snippet.replace("{{TTTT}}",T);
+    h = h.replace("{{KEY}}",key);
+    h = h.replace("{{AXXX}}",Ax);
+    h = h.replace("{{AYYY}}",Ay);
+    h = h.replace("{{AZZZ}}",Az);
+    document.getElementById('test').insertAdjacentHTML("beforeend", h);
+}
+
+var query = database.ref('Room1').orderByKey();
+query.once('value', (snapshot) => {
+  snapshot.forEach(function(childSnapshot){
+    var key = childSnapshot.key;
+    var Acx = childSnapshot.val().Ax;
+    var Acy = childSnapshot.val().Ay;
+    var Acz = childSnapshot.val().Az;
+    var T = childSnapshot.val().Temp;
+    
+    add_row(T,Acx,Acy,Acz,key);
+  });
+});
+
+query.limitToLast(1).on('child_added', (childSnapshot) => {
+
+    var key = childSnapshot.key;
+    var Acx = childSnapshot.val().Ax;
+    var Acy = childSnapshot.val().Ay;
+    var Acz = childSnapshot.val().Az;
+    var T = childSnapshot.val().Temp;
+    
+    add_row(T,Acx,Acy,Acz,key);
+ 
+ });
   
 
