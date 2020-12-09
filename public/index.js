@@ -62,5 +62,11 @@ query.limitToLast(1).on('child_added', (childSnapshot) => {
     add_row(T,Acx,Acy,Acz,key);
  
  });
+
+ $(document).ready(function(){
+  $("#rm_but").click(function(){
+      $("#readmore").modal('toggle')
+  });
   
+});
 
