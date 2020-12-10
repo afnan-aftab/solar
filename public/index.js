@@ -18,6 +18,7 @@ var aut = firebase.auth();
 
 
 var snippet = "<tr><th scope=\"row\">"+"{{KEY}}"+"</th><td>"+"{{TTTT}}"+"</td><td>"+"{{AXXX}}"+"</td><td>"+"{{AYYY}}"+"</td><td>"+"{{AZZZ}}"+"</td></tr>";
+var data_row_array = [];
 
 document.addEventListener("DOMContentLoaded", initial);
 
@@ -77,4 +78,3 @@ $(document).ready(function(){
   });
 
 });
-

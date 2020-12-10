@@ -87,13 +87,17 @@
 
   <!--------Login Modal End-------->
 
-  <div class="container">
+  <!--------Scatter Plot-------->
+  <div class="container-fluid d-flex justify-content-center" id="chart_div"></div>
+  <!--------Scatter Plot End-------->
 
+  <!--------Table-------->
+  <div class="container">
     <div class="table-responsive">
       <table class="table table-hover table-bordered">
         <thead class="thead-dark">
           <tr>
-            <th scope="col">Key</th>
+            <th scope="col">Time</th>
             <th scope="col">Temperature</th>
             <th scope="col">Ax</th>
             <th scope="col">Ay</th>
@@ -107,6 +111,7 @@
     </div>
 
   </div>
+  <!--------Table End-------->
 
   <!-- Footer -->
   <footer class="page-footer font-small bg-dark footer-dark text-light">
@@ -131,8 +136,45 @@
   <!-- Add the database Firebase JavaScript SDK -->
   <script src="/__/firebase/8.1.2/firebase-database.js"></script>
   <script src="/__/firebase/8.1.2/firebase-auth.js"></script>
+  <script src="https://www.gstatic.com/charts/loader.js"></script>
   <!-- Initialize Firebase -->
   <script src="index.js"></script>
+  <script>
+    google.charts.load('current', {'packages':['scatter']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart () {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Time');
+        data.addColumn('number', 'Ax');
+        data.addColumn('number', 'Ay');
+        data.addColumn('number', 'Ay');
+
+
+        data.addRows([
+          ["1 o clock",0.2,0.3,0.4], ["2 o clock",0.1,-0.3,-0.22], ["3 o clock",-0.14,-0.4,0.39]
+        ]);
+
+        var options = {
+          width: 800,
+          height: 500,
+          chart: {
+            title: 'Gyro Chart',
+            subtitle: 'Scatter Plot'
+          },
+          axes: {
+            y: {
+              'Ax': {label: 'Ax/Ay/Az'},
+            }
+          }
+        };
+
+        var chart = new google.charts.Scatter(document.getElementById('chart_div'));
+
+        chart.draw(data, google.charts.Scatter.convertOptions(options));
+      }
+  </script>
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
 
 
