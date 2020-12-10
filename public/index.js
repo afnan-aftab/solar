@@ -13,7 +13,7 @@ var firebaseConfig = {
 var Project = firebase.initializeApp(firebaseConfig);
 console.log(Project.name);
 var database = firebase.database();
-var aut = Project.auth();
+var aut = firebase.auth();
 // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
 
