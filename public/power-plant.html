@@ -32,8 +32,8 @@
         <div class = "collapse navbar-collapse" id = "Navbar">
             <ul class = "navbar-nav mr-auto">
                 <li class = "nav-item"><a class = "nav-link" href = "./index.html">Home</a></li>
-                <li class = "nav-item active"><a class = "nav-link" href = "#">Gyro</a></li>
-                <li class = "nav-item"><a class = "nav-link" href = "power-plant.html">Power Plant</a></li>
+                <li class = "nav-item"><a class = "nav-link" href = "Gyro.html">Gyro</a></li>
+                <li class = "nav-item active"><a class = "nav-link" href = "#">Power Plant</a></li>
                 <li class = "nav-item"><a class = "nav-link" href = "#">Slave Nodes</a></li>
             </ul>
             <span class="navbar-text">
@@ -88,28 +88,41 @@
   <!--------Login Modal End-------->
 
   <!--------Scatter Plot-------->
-  <div class="container-fluid d-flex justify-content-center" id="chart_div"></div>
-  <!--------Scatter Plot End-------->
-
-  <!--------Table-------->
-  <div class="container">
+  <div class="container align-items-center">
     <div class="table-responsive">
       <table class="table table-hover table-bordered">
         <thead class="thead-dark">
           <tr>
-            <th scope="col">Time</th>
-            <th scope="col">Temperature</th>
-            <th scope="col">Ax</th>
-            <th scope="col">Ay</th>
-            <th scope="col">Az</th>
+            <th class="text-center" scope="col">Scatter Plot of Data</th>
           </tr>
         </thead>
-        <tbody id="table-gyro">
+      </table>
+    </div>
+    <div class="container-fluid d-flex justify-content-center" id="chart_power"></div>
+    <div><a id="show_plot_power" class="btn btn-dark btn-lg" href="#" role="button">Click to Display Scatter Plot</a></div>
+  </div>
+  <!--------Scatter Plot End-------->
+
+  <!--------Table-------->
+  <div class="container justify-content-center">
+    <div class="table-responsive">
+      <table class="table table-hover table-bordered">
+        <thead class="thead-dark">
+          <tr>
+            <th scope="col">#</th>
+            <th scope="col">Date &amp; Time</th>
+            <th scope="col">AC Power</th>
+            <th scope="col">DC Power</th>
+            <th scope="col">Daily Yield</th>
+            <th scope="col">Total Yield</th>
+          </tr>
+        </thead>
+        <tbody id="table-pp">
           
         </tbody>
       </table>
     </div>
-
+    <div><a id="show_table_power" class="btn btn-dark btn-lg" href="#" role="button">Click to Display Table</a></div>
   </div>
   <!--------Table End-------->
 
@@ -139,42 +152,6 @@
   <script src="https://www.gstatic.com/charts/loader.js"></script>
   <!-- Initialize Firebase -->
   <script src="index.js"></script>
-  <script>
-    google.charts.load('current', {'packages':['scatter']});
-      google.charts.setOnLoadCallback(drawChart);
-
-      function drawChart () {
-
-        var data = new google.visualization.DataTable();
-        data.addColumn('string', 'Time');
-        data.addColumn('number', 'Ax');
-        data.addColumn('number', 'Ay');
-        data.addColumn('number', 'Ay');
-
-
-        data.addRows([
-          ["1 o clock",0.2,0.3,0.4], ["2 o clock",0.1,-0.3,-0.22], ["3 o clock",-0.14,-0.4,0.39]
-        ]);
-
-        var options = {
-          width: 800,
-          height: 500,
-          chart: {
-            title: 'Gyro Chart',
-            subtitle: 'Scatter Plot'
-          },
-          axes: {
-            y: {
-              'Ax': {label: 'Ax/Ay/Az'},
-            }
-          }
-        };
-
-        var chart = new google.charts.Scatter(document.getElementById('chart_div'));
-
-        chart.draw(data, google.charts.Scatter.convertOptions(options));
-      }
-  </script>
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
 
 
