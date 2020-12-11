@@ -20,3 +20,10 @@
 html {
   scroll-behavior: smooth;
 }
+
+.bg-cover {
+  background-attachment: static;
+  background-position: center;
+  background-repeat: no-repeat;
+  background-size: cover;
+}
