@@ -94,6 +94,41 @@ function power_chart(arr,id_div){
       }
 }
 
+function gyro_chart(arr,id_div){
+  google.charts.load('current', {'packages':['scatter']});
+      google.charts.setOnLoadCallback(drawChart);
+
+      function drawChart () {
+
+        var data = new google.visualization.DataTable();
+        data.addColumn('string', 'Time');
+        data.addColumn('number', 'Ax');
+        data.addColumn('number', 'Ay');
+        data.addColumn('number', 'Ay');
+
+
+        data.addRows(arr);
+
+        var options = {
+          width: 800,
+          height: 500,
+          chart: {
+            title: 'Gyro Chart',
+            subtitle: 'Scatter Plot'
+          },
+          axes: {
+            y: {
+              'Ax': {label: 'Ax/Ay/Az'},
+            }
+          }
+        };
+
+        var chart = new google.charts.Scatter(document.getElementById(id_div));
+
+        chart.draw(data, google.charts.Scatter.convertOptions(options));
+      }
+}
+
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function() {scrollFunction()};
 
@@ -116,30 +151,6 @@ document.getElementById('top_btn').addEventListener('click',topFunction)
 var query = database.ref('Room1').orderByKey();
 var querypower = database.ref('power').orderByChild('DATE_TIME');
 
-query.on('value', (snapshot) => {
-  snapshot.forEach(function(childSnapshot){
-    var key = childSnapshot.key;
-    var Acx = childSnapshot.val().Ax;
-    var Acy = childSnapshot.val().Ay;
-    var Acz = childSnapshot.val().Az;
-    var T = childSnapshot.val().Temp;
-    
-    add_row_gyro(T,Acx,Acy,Acz,key);
-  });
-});
-
-query.limitToLast(1).on('child_added', (childSnapshot) => {
-
-    var key = childSnapshot.key;
-    var Acx = childSnapshot.val().Ax;
-    var Acy = childSnapshot.val().Ay;
-    var Acz = childSnapshot.val().Az;
-    var T = childSnapshot.val().Temp;
-    
-    add_row_gyro(T,Acx,Acy,Acz,key);
- 
-});
-
 
 $(document).ready(function(){
   $("#rm_but").click(function(){
@@ -153,6 +164,40 @@ $(document).ready(function(){
     $("#loginModal").modal('toggle')
   });
 
+});
+
+$(document).ready(function(){
+  $("#show_table_gyro").click(function(){
+    query.on('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot){
+        var key = childSnapshot.key;
+        var Acx = childSnapshot.val().Ax;
+        var Acy = childSnapshot.val().Ay;
+        var Acz = childSnapshot.val().Az;
+        var T = childSnapshot.val().Temp;
+        
+        add_row_gyro(T,Acx,Acy,Acz,key);
+      });
+    });
+    document.getElementById('show_table_gyro').innerHTML = "Click to Refresh Data";
+  });
+});
+
+$(document).ready(function(){
+  $("#show_plot_gyro").click(function(){
+    var arr = [];
+    query.on('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot){
+        var key = childSnapshot.key;
+        var Acx = childSnapshot.val().Ax;
+        var Acy = childSnapshot.val().Ay;
+        var Acz = childSnapshot.val().Az;
+        arr[arr.length]=[key,Acx,Acy,Acz];
+      });
+    });
+    gyro_chart(arr,'chart_gyro');
+    document.getElementById('show_plot_gyro').innerHTML = "Click to Refresh Chart";
+  });
 });
 
 $(document).ready(function(){
