@@ -1,0 +1,12 @@
+{
+  "type": "service_account",
+  "project_id": "iot-solar-database",
+  "private_key_id": "561c8394e6c73ae8032a136eab6d2e32c324a076",
+  "private_key": "-----BEGIN PRIVATE KEY-----\nMIIEvgIBADANBgkqhkiG9w0BAQEFAASCBKgwggSkAgEAAoIBAQCi0KmBqEadpENX\nU+T6EdGe+UCzjkS/h07sSoQA+tEqM3acQ7gpfz1+TrcotbHomlFo9okMe7ZyHcJL\nWhm0Os3lOIbam8Q1g8LRI/G0oCKU6yrckTz5VmLzPZFaxB2fvNcTL+C8j0HAjX87\nSI2NK4+rNZSFYoE/kh+92muq1rgOIqNYCDrId4m/M9OxS8PxyxIXQKThkXZ0P/ZQ\nDJ7PHs+YX95ckvtATPIp6Ykl7yslvIz+exAtuLM1uHtDesPML3LlIYtvi9wC8wUN\nwVETb+dmLZXHCY+6V7zVnVWewFbzIt149NI/DZGUMPpd+syO5jRjWdI92q/MdJdu\n+ayTKPMpAgMBAAECggEAAMezKDXgML0qvW5feHtBX9ud3b5ewfQqAqPQwhhxjBw3\nA0Snyzsa1lIWOpG0SoMCxNf5jB/DngRae/XwjZaCigidTMrWQ9NfyZS8gbsKr1/5\nEpl3i1JIoxW2bpLl+W/0L9lY4E5naD7FT0lntDdzNsTI82Knb+CJWmWDgowI0biC\ny3j3mnUpGYIHIzO3pbp6TWZuuTPoI8DnnraeB9uECMabs54NVjj4fUJhAOTD4NLQ\n9GszuIjU6zXWQLojQOABukLe1NUI2BqUv8C5znF9hw5u0g6RfnnMtgP8ORK+UylG\nTbHP464hHaORhjpajeyQjUthKevkoURlRvpkld6RAQKBgQDl7PLuxpzBOofPjkpP\nzofWMA0CjYQf4vup0aWcs5kTW0vAyTDacXzaMF/o74DEfXX4kgp3rSGfsQ0iQ3uX\nrUd1XKb19GtkqC7oVdCDYOdahXewZyorGAzgwaUlqDPyTOAkKseOQucvX6536PAB\nTVMf1yvA0EpBeCSPBWwGqq4u+QKBgQC1R2eUOKvbikZk9+nu4fAMt1DiN9GLBdEJ\n85w15hVQYg7VpYU5CuS18/AjQGc/2+NLq+eDhQgIEem/RCmVSEYSgxl9Q8vwuC1n\nc+J82JwkE0pg5hPwAxJz3zk3QMRSynW1QQm7bkZYnE8DcD/3Dh1KeKs/p2c3kxGg\nkPS65EeBsQKBgQDUukztpG7FzHx5CUIx4nkFL4Hp+brjsaN8NA7RE82t/grxfHOp\nt9R3HsiuAGGX6igq6hurLFDuqeXn7J298MErkaSb7R8rivuTVEpOM2r58oCRgnGe\nW2sWy7MbSyt8o6nBbJ8jPT0eNJ18LdVYrw0YaYD+rPf26MySUsbmyCXOKQKBgCAG\nf1wGLwZYBVutGJzlOX1lnVp5tgEzg9yYNw6mmTlcOXaxCTosnH8wm0n/BL6ZYCxs\nMDhh9itGzt7Fcfs3i3mVw5kHsy3Ru+O861RXCC6vYcKAoyERyd7Cnt8OCCEAN49P\n8CI2tyLMaoEXAZXp3m7bppVWQ7vjtYeCVFn4HlHhAoGBAJfogE5gnMH0sQJv3EX9\n0kcslnOHNA0nrvenYNrRHWLUFxl3GdF9T2CkyEb2SLmdVO7SC6JgYDRWWKayxYGx\niCtheQ+mlrGyRxdqGGpcADaL/SbyI7oazs/hZCGBGXW7vDmKNKJc4mMoCnQuFngo\nAYzEzFBYC83ganyqlsk/jMjo\n-----END PRIVATE KEY-----\n",
+  "client_email": "firebase-adminsdk-bt8nx@iot-solar-database.iam.gserviceaccount.com",
+  "client_id": "107377943489085867547",
+  "auth_uri": "https://accounts.google.com/o/oauth2/auth",
+  "token_uri": "https://oauth2.googleapis.com/token",
+  "auth_provider_x509_cert_url": "https://www.googleapis.com/oauth2/v1/certs",
+  "client_x509_cert_url": "https://www.googleapis.com/robot/v1/metadata/x509/firebase-adminsdk-bt8nx%40iot-solar-database.iam.gserviceaccount.com"
+}
