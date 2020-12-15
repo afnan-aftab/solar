@@ -40,6 +40,19 @@ function add_row_gyro(T,Ax,Ay,Az,key){
   
 }
 
+function avg_array(arr){
+  if(arr.length == 0){
+    return 0;
+  }
+  else{
+    var sum = 0;
+    for (i=0;i<arr.length;i++){
+      sum += arr[i];
+    }
+  return sum/arr.length;
+  }
+}
+
 function add_row_power(key,date,AC_p,CD_p,dailyyield,Tot){
   var h = snippet_power.replace("{{KEY}}",key);
   h = h.replace("{{TTTT}}",date);
@@ -145,11 +158,16 @@ function topFunction() {
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
+function showLoading(selector) {
+  var html = "<div id='loading' class='text-center'>";
+  html += "<img src='img/831.gif'></div>";
+  document.getElementById(selector).innerHTML=html;
+};
 
 document.getElementById('top_btn').addEventListener('click',topFunction)
 
 var query = database.ref('Room1').orderByKey();
-var querypower = database.ref('power').orderByChild('DATE_TIME');
+var querypower = database.ref('power').orderByKey();
 
 
 $(document).ready(function(){
@@ -168,6 +186,7 @@ $(document).ready(function(){
 
 $(document).ready(function(){
   $("#show_table_gyro").click(function(){
+    showLoading('table-gyro');
     query.on('value', (snapshot) => {
       snapshot.forEach(function(childSnapshot){
         var key = childSnapshot.key;
@@ -179,6 +198,7 @@ $(document).ready(function(){
         add_row_gyro(T,Acx,Acy,Acz,key);
       });
     });
+    document.getElementById('loading').remove();
     document.getElementById('show_table_gyro').innerHTML = "Click to Refresh Data";
   });
 });
@@ -186,6 +206,7 @@ $(document).ready(function(){
 $(document).ready(function(){
   $("#show_plot_gyro").click(function(){
     var arr = [];
+    showLoading('chart_gyro');
     query.on('value', (snapshot) => {
       snapshot.forEach(function(childSnapshot){
         var key = childSnapshot.key;
@@ -202,7 +223,9 @@ $(document).ready(function(){
 
 $(document).ready(function(){
   $("#show_table_power").click(function(){
-    querypower.on('value', (snapshot) => {
+    showLoading('table-pp');
+    var querypowerlimit = querypower.limitToLast(300);
+    querypowerlimit.on('value', (snapshot) => {
       snapshot.forEach(function(childSnapshot){
         var key = childSnapshot.key;
         var AC_p = childSnapshot.val().AC_POWER;
@@ -214,6 +237,7 @@ $(document).ready(function(){
         add_row_power(key,date,AC_p,CD_p,dailyyield,Tot);
       });
     });
+    document.getElementById('loading').remove();
     document.getElementById('show_table_power').innerHTML = "Click to Refresh Data";
   });
 
@@ -222,7 +246,9 @@ $(document).ready(function(){
 $(document).ready(function(){
   $("#show_plot_power").click(function(){
     var arr = [];
-    querypower.on('value', (snapshot) => {
+    showLoading('chart_power');
+    var querypowerlimit = querypower.limitToLast(300);
+    querypowerlimit.on('value', (snapshot) => {
       snapshot.forEach(function(childSnapshot){
         var AC_p = childSnapshot.val().AC_POWER;
         var CD_p = childSnapshot.val().DC_POWER;
@@ -236,3 +262,69 @@ $(document).ready(function(){
   });
 
 });
+
+/*$(document).ready(function(){
+  $("#show_plot_power").click(function(){
+    var arr = [];
+    var AC = [];
+    var CD = [];
+    var ye = [];
+    showLoading('chart_power');
+    var querypowerlimit = querypower.limitToLast(300);
+    querypower.on('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot){
+        var AC_p = childSnapshot.val().AC_POWER;
+        var CD_p = childSnapshot.val().DC_POWER;
+        var dailyyield = childSnapshot.val().DAILY_YIELD;
+        var date = childSnapshot.val().DATE_TIME;
+        var time = date[date.length-5]+date[date.length-4]+date[date.length-3]+date[date.length-2]+date[date.length-1];
+        if(time<'12:45'){
+          AC[AC.length] = AC_p;
+          CD[CD.length] = CD_p;
+          ye[ye.length] = dailyyield;
+        }else{
+          var aAC = avg_array(AC);
+          var aCD = avg_array(CD);
+          var aYe = avg_array(ye);
+          if (AC.length != 0){
+            arr[arr.length] = [date,(aAC+AC_p)/2,(aCD+CD_p)/2,(aYe+dailyyield)/2];
+          }
+          AC = [];
+          CD = [];
+          ye = [];
+        }
+      });
+      snapshot.forEach(function(childSnapshot){
+        var AC_p = childSnapshot.val().AC_POWER;
+        var CD_p = childSnapshot.val().DC_POWER;
+        var dailyyield = childSnapshot.val().DAILY_YIELD;
+        var date = childSnapshot.val().DATE_TIME;
+        var a = '';
+        var b = 0;
+        var time = date[date.length-5]+date[date.length-4]+date[date.length-3]+date[date.length-2]+date[date.length-1];
+        if(time>'12:45'){
+          b = AC.length;
+          AC[AC.length] = AC_p;
+          CD[CD.length] = CD_p;
+          ye[ye.length] = dailyyield;
+          a = date;
+        }
+        
+        if(AC.length != 0){
+          var aAC = avg_array(AC);
+          var aCD = avg_array(CD);
+          var aYe = avg_array(ye);
+          arr[arr.length] = [a,aAC*2-AC_p,aCD*2-CD_p,aYe*2-dailyyield];
+          AC = [];
+          CD = [];
+          ye = [];
+        }
+        
+      });
+    });
+    console.log(arr);
+    power_chart(arr,'chart_power');
+    document.getElementById('show_plot_power').innerHTML = "Click to Refresh Chart";
+  });
+
+});*/

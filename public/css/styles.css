@@ -8,8 +8,6 @@
     padding: 6px 0px;
     border-radius: 25px;
     text-align: center;
-    font-size: 12px;
-    line-height: 1.42857;
     display: none; /* Hidden by default */
     position: fixed; /* Fixed/sticky position */
     bottom: 30px; /* Place the button at the bottom of the page */
