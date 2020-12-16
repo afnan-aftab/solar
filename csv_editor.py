@@ -1,6 +1,7 @@
 import firebase_admin
 from firebase_admin import credentials
 from firebase_admin import db
+import pandas
 
 cred = credentials.Certificate("admin-sdk.json")
 firebase_admin.initialize_app(cred,{
@@ -9,3 +10,6 @@ firebase_admin.initialize_app(cred,{
 
 ref = db.reference('Room2/')
 ref.set({})
+
+df = pandas.read_csv('dataset-solar/Plant_1_Generation_Data.csv')
+print(df)
