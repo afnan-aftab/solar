@@ -8,10 +8,5 @@ firebase_admin.initialize_app(cred,{
     'databaseURL': 'https://iot-solar-database-default-rtdb.firebaseio.com/'
 })
 
-ref = db.reference('Room2/')
-ref.set({
-    'family':0
-})
-
 df = pandas.read_csv('dataset-solar/Plant_1_Generation_Data.csv')
-print(df)
+
