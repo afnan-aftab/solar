@@ -1,4 +1,4 @@
 {
-    "python.pythonPath": "X:\\Barood\\firebase\\python\\python.exe",
+    "python.pythonPath": "python3.8\\python.exe",
     "jupyter.jupyterServerType": "local"
 }
