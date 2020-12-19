@@ -1,3 +1,8 @@
-import * as tf from '@tensorflow/tfjs';
+async function stupid() {
+    const dnn_model = await tf.loadLayersModel('dnn_model.json');
+    dnn_model.predict(tf.tensor([11.0, 15.0,29.597730,56.443897,1.038991,12816.133928])).print();
+}
 
-const dnn_model = await tf.loadLayersModel('https://storage.googleapis.com/iot-solar-database.appspot.com/TF_JS_model/dnn_model.json');
+$(document).ready(function(){
+    stupid();
+});
