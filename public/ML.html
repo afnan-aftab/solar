@@ -9,7 +9,7 @@
   <meta name="description" content="FYP">
   <meta name="author" content="Afnan">
 
-  <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
+<!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
   <!-- Bootstrap core JavaScript -->
   <script src="vendor/jquery/jquery.min.js"></script>
   <script src="vendor/bootstrap/js/bootstrap.bundle.min.js"></script>
@@ -18,7 +18,7 @@
   <!-- Add the database Firebase JavaScript SDK -->
   <script src="/__/firebase/8.1.2/firebase-database.js"></script>
   <script src="/__/firebase/8.2.1/firebase-storage.js"></script>
-  <script src="https://www.gstatic.com/charts/loader.js"></script>
+
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
 
   <title>FYP</title>
@@ -45,8 +45,8 @@
             <ul class = "navbar-nav mr-auto">
                 <li class = "nav-item"><a class = "nav-link" href = "./index.html">Home</a></li>
                 <li class = "nav-item"><a class = "nav-link" href = "Gyro.html">Gyro</a></li>
-                <li class = "nav-item active"><a class = "nav-link" href = "#">Power Plant</a></li>
-                <li class = "nav-item"><a class = "nav-link" href = "ML.html">Machine Learning</a></li>
+                <li class = "nav-item"><a class = "nav-link" href = "power-plant.html">Power Plant</a></li>
+                <li class = "nav-item active"><a class = "nav-link" href = "#">Machine Learning</a></li>
             </ul>
             <span class="navbar-text">
                 <a id="login">
@@ -99,44 +99,21 @@
 
   <!--------Login Modal End-------->
 
-  <!--------Scatter Plot-------->
-  <div class="container align-items-center">
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered">
-        <thead class="thead-dark">
-          <tr>
-            <th class="text-center" scope="col">Scatter Plot of Data</th>
-          </tr>
-        </thead>
-      </table>
+    <!--------button-------->
+    <div class="container align-items-center">
+        <div class="table-responsive">
+          <table class="table table-hover table-bordered">
+            <thead class="thead-dark">
+              <tr>
+                <th class="text-center" scope="col">Machine Learning</th>
+              </tr>
+            </thead>
+          </table>
+        </div>
+        <div class="container-fluid d-flex justify-content-center" id="chart_power"></div>
+        <div><a id="storage-butt" class="btn btn-dark btn-lg" role="button">Click!</a></div>
     </div>
-    <div class="container-fluid d-flex justify-content-center" id="chart_power"></div>
-    <div><a id="show_plot_power" class="btn btn-dark btn-lg" href="#" role="button">Click to Display Scatter Plot</a></div>
-  </div>
-  <!--------Scatter Plot End-------->
-
-  <!--------Table-------->
-  <div class="container justify-content-center">
-    <div class="table-responsive">
-      <table class="table table-hover table-bordered">
-        <thead class="thead-dark">
-          <tr>
-            <th scope="col">#</th>
-            <th scope="col">Date &amp; Time</th>
-            <th scope="col">AC Power</th>
-            <th scope="col">DC Power</th>
-            <th scope="col">Daily Yield</th>
-            <th scope="col">Total Yield</th>
-          </tr>
-        </thead>
-        <tbody id="table-pp">
-          
-        </tbody>
-      </table>
-    </div>
-    <div><a id="show_table_power" class="btn btn-dark btn-lg" href="#" role="button">Click to Display Table</a></div>
-  </div>
-  <!--------Table End-------->
+      <!--------button End-------->
 
   <!--------To top Button-------->
   <button id="top_btn" type="button" class="btn btn-secondary btn-lg btn-circle text-light">&#x02227;</button>
@@ -152,7 +129,7 @@
     <!-- Copyright -->
   
   </footer>
-<!-- Footer -->
+  <!-- Footer -->
 
 
 

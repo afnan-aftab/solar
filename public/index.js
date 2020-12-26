@@ -9,11 +9,12 @@ var firebaseConfig = {
     appId: "1:804706405547:web:10a3358b308bc4c891fbee",
     measurementId: "G-Q18KF5TDXH"
   };
+  
 // Initialize Firebase with a "default" Firebase project
 var Project = firebase.initializeApp(firebaseConfig);
 console.log(Project.name);
 var database = firebase.database();
-var aut = firebase.auth();
+var storage = firebase.storage();
 // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
 
@@ -24,7 +25,7 @@ var data_row_array = [];
 document.addEventListener("DOMContentLoaded", initial);
 
 function initial(){
-
+  load_img('solar-house.png','nav-img');
 }
 
 function add_row_gyro(T,Ax,Ay,Az,key){
@@ -164,11 +165,21 @@ function showLoading(selector) {
   document.getElementById(selector).innerHTML=html;
 };
 
+//to display an image from storage bucket in web page
+function load_img(imgname,divID){
+  storage.ref('img/'+imgname).getDownloadURL().then(function(url)                             {
+    document.getElementById(divID).src = url;
+  }).catch(function(error) {
+    console.error(error);
+  });
+}
+
 document.getElementById('top_btn').addEventListener('click',topFunction)
 
 var query = database.ref('Room1').orderByKey();
 var querypower = database.ref('power').orderByKey();
 
+//document.getElementById('nav-img').src = 'https://storage.googleapis.com/iot-solar-database.appspot.com/img/solar-house.png';
 
 $(document).ready(function(){
   $("#rm_but").click(function(){
@@ -261,6 +272,27 @@ $(document).ready(function(){
     document.getElementById('show_plot_power').innerHTML = "Click to Refresh Chart";
   });
 
+});
+
+$(document).ready(function(){
+  $("#storage-butt").click(function(){
+
+    storage.ref('solar dataset/CV.pdf').getDownloadURL().then(function(url) {
+      // `url` is the download URL for 'images/stars.jpg'
+    
+      // This can be downloaded directly:
+      var xhr = new XMLHttpRequest();
+      xhr.responseType = 'blob';
+      xhr.onload = function(event) {
+        var blob = xhr.response;
+      };
+      xhr.open('GET', url);
+      xhr.send();
+    }).catch(function(error) {
+      // Handle any errors
+    });
+
+  });
 });
 
 /*$(document).ready(function(){
