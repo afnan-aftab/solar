@@ -17,43 +17,55 @@ var database = firebase.database();
 var storage = firebase.storage();
 // // 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥
 
-
+// VARIABLES -------------------->
 var snippet_gyro = "<tr><th scope=\"row\">"+"{{KEY}}"+"</th><td>"+"{{TTTT}}"+"</td><td>"+"{{AXXX}}"+"</td><td>"+"{{AYYY}}"+"</td><td>"+"{{AZZZ}}"+"</td></tr>";
 var snippet_power = "<tr><th scope=\"row\">"+"{{KEY}}"+"</th><td>"+"{{TTTT}}"+"</td><td>"+"{{AXXX}}"+"</td><td>"+"{{AYYY}}"+"</td><td>"+"{{AZZZ}}"+"</td><td>"+"{{AGGG}}"+"</td></tr>";
 var data_row_array = [];
+// END VARIABLES -------------------->
 
+
+// Initial function ----------------------------->
 document.addEventListener("DOMContentLoaded", initial);
 
 function initial(){
-  load_img('solar-house.png','nav-img');
-}
 
-function add_row_gyro(T,Ax,Ay,Az,key){
-  var h = snippet_gyro.replace("{{TTTT}}",T);
-  h = h.replace("{{KEY}}",key);
-  h = h.replace("{{AXXX}}",Ax);
-  h = h.replace("{{AYYY}}",Ay);
-  h = h.replace("{{AZZZ}}",Az);
-  if(document.getElementById('table-gyro')==null)
-  {}else{
-    document.getElementById('table-gyro').insertAdjacentHTML("beforeend", h);
-  }
-  
-}
+  load_img('img/solar-house.png','nav-img');
 
-function avg_array(arr){
-  if(arr.length == 0){
-    return 0;
+  if(document.querySelector('#jumbo')!= null){
+    storage.ref('img/2028.jpg').getDownloadURL().then(function(url){
+      document.querySelector('#jumbo').style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url("+url+")";
+    });
   }
-  else{
-    var sum = 0;
-    for (i=0;i<arr.length;i++){
-      sum += arr[i];
+
+}
+// END Initial function ----------------------------->
+
+//Function to download file to computer------>
+function download_file(path){
+  storage.ref(path).getDownloadURL().then(function (url) {
+    var link = document.createElement("a");
+    if (link.download !== undefined) {
+        link.setAttribute("href", url);
+        link.setAttribute("target", "_blank");
+        link.style.visibility = 'hidden';
+        document.body.appendChild(link);
+        link.click();
+        document.body.removeChild(link);
     }
-  return sum/arr.length;
-  }
+})
 }
+//END Function to download file to computer------>
 
+// load image in web page ---------------------->
+function load_img(path,id_div){
+  storage.ref(path).getDownloadURL().then(function(url){
+    var test = url;
+    document.querySelector('#' + id_div).src = test;
+  });
+}
+//END load image in web page ------------------->
+
+//ADD row to power table ------------------->
 function add_row_power(key,date,AC_p,CD_p,dailyyield,Tot){
   var h = snippet_power.replace("{{KEY}}",key);
   h = h.replace("{{TTTT}}",date);
@@ -67,6 +79,39 @@ function add_row_power(key,date,AC_p,CD_p,dailyyield,Tot){
   }
   
 }
+//END ADD row to power table ------------------->
+
+//ADD row to gyro page table  ------------>
+function add_row_gyro(T,Ax,Ay,Az,key){
+  var h = snippet_gyro.replace("{{TTTT}}",T);
+  h = h.replace("{{KEY}}",key);
+  h = h.replace("{{AXXX}}",Ax);
+  h = h.replace("{{AYYY}}",Ay);
+  h = h.replace("{{AZZZ}}",Az);
+  if(document.getElementById('table-gyro')==null)
+  {}else{
+    document.getElementById('table-gyro').insertAdjacentHTML("beforeend", h);
+  }
+  
+}
+//END ADD row to gyro page table  ------------>
+
+//calculate average of an array -------->
+function avg_array(arr){
+  if(arr.length == 0){
+    return 0;
+  }
+  else{
+    var sum = 0;
+    for (i=0;i<arr.length;i++){
+      sum += arr[i];
+    }
+  return sum/arr.length;
+  }
+}
+//ENDcalculate average of an array -------->
+
+//draw chart POWER page ----------------------->
 
 function power_chart(arr,id_div){
   google.charts.load('current', {'packages':['scatter']});
@@ -107,7 +152,10 @@ function power_chart(arr,id_div){
         chart.draw(data, google.charts.Scatter.convertOptions(options));
       }
 }
+//END draw chart POWER page ----------------------->
 
+
+// draw chart to GYRO page --------------------------->
 function gyro_chart(arr,id_div){
   google.charts.load('current', {'packages':['scatter']});
       google.charts.setOnLoadCallback(drawChart);
@@ -143,6 +191,9 @@ function gyro_chart(arr,id_div){
       }
 }
 
+//END draw chart to GYRO page --------------------------->
+
+//Smooth Scroll and scroll to top button -------------------------------------------------->
 // When the user scrolls down 20px from the top of the document, show the button
 window.onscroll = function() {scrollFunction()};
 
@@ -159,27 +210,14 @@ function topFunction() {
   document.body.scrollTop = 0; // For Safari
   document.documentElement.scrollTop = 0; // For Chrome, Firefox, IE and Opera
 }
-function showLoading(selector) {
-  var html = "<div id='loading' class='text-center'>";
-  html += "<img src='img/831.gif'></div>";
-  document.getElementById(selector).innerHTML=html;
-};
-
-//to display an image from storage bucket in web page
-function load_img(imgname,divID){
-  storage.ref('img/'+imgname).getDownloadURL().then(function(url)                             {
-    document.getElementById(divID).src = url;
-  }).catch(function(error) {
-    console.error(error);
-  });
-}
 
 document.getElementById('top_btn').addEventListener('click',topFunction)
+//Smooth Scroll and scroll to top button -------------------------------------------------->
+
 
 var query = database.ref('Room1').orderByKey();
 var querypower = database.ref('power').orderByKey();
 
-//document.getElementById('nav-img').src = 'https://storage.googleapis.com/iot-solar-database.appspot.com/img/solar-house.png';
 
 $(document).ready(function(){
   $("#rm_but").click(function(){
@@ -277,21 +315,7 @@ $(document).ready(function(){
 $(document).ready(function(){
   $("#storage-butt").click(function(){
 
-    storage.ref('solar dataset/CV.pdf').getDownloadURL().then(function(url) {
-      // `url` is the download URL for 'images/stars.jpg'
-    
-      // This can be downloaded directly:
-      var xhr = new XMLHttpRequest();
-      xhr.responseType = 'blob';
-      xhr.onload = function(event) {
-        var blob = xhr.response;
-      };
-      xhr.open('GET', url);
-      xhr.send();
-    }).catch(function(error) {
-      // Handle any errors
-      console.log(error);
-    });
+    download_file('solar_dataset/Plant_1_generation+sensor.csv');
 
   });
 });
