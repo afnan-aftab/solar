@@ -290,6 +290,7 @@ $(document).ready(function(){
       xhr.send();
     }).catch(function(error) {
       // Handle any errors
+      console.log(error);
     });
 
   });

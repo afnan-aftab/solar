@@ -12,6 +12,7 @@ firebase-debug.*.log*
 
 #python and libs
 python3.8/
+gsutil/
 
 # Firebase config
 
