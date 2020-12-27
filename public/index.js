@@ -312,14 +312,6 @@ $(document).ready(function(){
 
 });
 
-$(document).ready(function(){
-  $("#storage-butt").click(function(){
-
-    download_file('solar_dataset/Plant_1_generation+sensor.csv');
-
-  });
-});
-
 /*$(document).ready(function(){
   $("#show_plot_power").click(function(){
     var arr = [];
