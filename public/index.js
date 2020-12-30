@@ -37,6 +37,10 @@ function initial(){
     });
   }
 
+  storage.ref('img/solar-house.png').getDownloadURL().then(function(url){
+    document.querySelector('#icon').href=url;
+  });
+
 }
 // END Initial function ----------------------------->
 

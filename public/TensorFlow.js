@@ -1,6 +1,16 @@
 //TENSORFLOW----------------------------------------------------------->
 
-console.log(tf+" "+tfvis);
+async function getData(){
+  var Datajson = 0;
+  var ref = database.ref('Plant_Generation+Sensor_Data/').orderByKey();
+  ref.on('value',(snapshot) => {
+    Datajson = snapshot.val();
+  });
+  const Data = await Datajson.json();
+  return Data;
+}
+
+/*console.log(tf+" "+tfvis);
 
 async function getData() {
   const carsDataResponse = await fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json');  
@@ -27,12 +37,12 @@ function createModel() {
   return model;
 }
 
-/**
- * Convert the input data to tensors that we can use for machine 
- * learning. We will also do the important best practices of _shuffling_
- * the data and _normalizing_ the data
- * MPG on the y-axis.
- */
+
+// Convert the input data to tensors that we can use for machine 
+// learning. We will also do the important best practices of _shuffling_
+// the data and _normalizing_ the data
+// MPG on the y-axis.
+///
 function convertToTensor(data) {
   // Wrapping these calculations in a tidy will dispose any 
   // intermediate tensors.
@@ -168,6 +178,13 @@ async function run() {
   // Make some predictions using the model and compare them to the
   // original data
   testModel(model, data, tensorData);
+}
+*/
+
+async function run(){
+  // Load and plot the original input data that we are going to train on.
+  const data = await getData();
+  console.log(data);
 }
 
 $(document).ready(function(){
