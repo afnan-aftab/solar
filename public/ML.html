@@ -262,7 +262,7 @@ async function trainModel(model, inputs, labels) {
   });
   
   const batchSize = 32;
-  const epochs = 2;
+  const epochs = 50;
   
   return await model.fit(inputs, labels, {
     batchSize,
@@ -283,9 +283,24 @@ function testModel(model, inputData, normalizationData) {
   // We un-normalize the data by doing the inverse of the min-max scaling 
   // that we did earlier.
   const [xs, preds] = tf.tidy(() => {
+
+    const inputs_I  = inputData.map(d => d.IRRADIATION)
+    const inputs_AT = inputData.map(d => d.AMBIENT_TEMPERATURE)
+    const inputs_MT = inputData.map(d => d.MODULE_TEMPERATURE)
+    var inputs = [];
+    for(i=0;i<inputs_I.length;i++){
+      if(inputs_I[i]>1){
+        inputs[inputs.length]=inputs_I[i];
+        inputs[inputs.length]=inputs_AT[i];
+        inputs[inputs.length]=inputs_MT[i];
+      }
+    }   
     
-    const xs = tf.linspace(0, 1, 100);      
-    const preds = model.predict(xs.reshape([100, 1]));      
+    const inputTensor = tf.tensor2d(inputs, [inputs.length/3, 3]);
+    const normalizedInputs = inputTensor.sub(inputMin).div(inputMax.sub(inputMin));
+    const xs = normalizedInputs;
+    //const xs = tf.linspace(0, 1, 100);      
+    const preds = model.predict(xs);      
     
     const unNormXs = xs
       .mul(inputMax.sub(inputMin))
@@ -298,23 +313,79 @@ function testModel(model, inputData, normalizationData) {
     // Un-normalize the data
     return [unNormXs.dataSync(), unNormPreds.dataSync()];
   });
-  
- 
-  const predictedPoints = Array.from(xs).map((val, i) => {
-    return {x: val, y: preds[i]}
+
+  var xs_arr = Array.from(xs);
+  var preds_arr = Array.from(preds);
+  var irr_arr = [];
+  var at_arr = [];
+  var mt_arr = [];
+  var ac_arr = [];
+  var dc_arr = [];
+
+  for(i=0;i<preds_arr.length;i++){
+    if(i%2==0){
+      ac_arr[ac_arr.length] = preds_arr[i];
+    }else{
+      dc_arr[dc_arr.length] = preds_arr[i];
+    }
+  }
+
+  for(i=0;i<xs_arr.length;i++){
+    irr_arr[irr_arr.length] = xs_arr[i];
+    i++;
+    at_arr[at_arr.length] = xs_arr[i];
+    i++;
+    mt_arr[mt_arr.length] = xs_arr[i];
+  }
+
+  console.log(irr_arr);
+  console.log(ac_arr);
+
+  var o = [];
+  for(i=0;i<irr_arr.length;i++){
+    var x = {
+      'IRRADIATION':irr_arr[i],
+      'AMBIENT_TEMPERATURE':at_arr[i],
+      'MODULE_TEMPERATURE':mt_arr[i],
+      'AC_POWER':ac_arr[i],
+      'DC_POWER':dc_arr[i]
+    };
+    o.push(x);
+  }
+
+  const predictedPoints = o.map(d => {
+    return {x: d.IRRADIATION, y: d.AC_POWER,};
   });
   
   const originalPoints = inputData.map(d => ({
-    x: d.horsepower, y: d.mpg,
+    x: d.IRRADIATION, y: d.AC_POWER,
+  }));
+
+  const predictedPoints1 = o.map(d => {
+    return {x: d.IRRADIATION, y: d.DC_POWER,};
+  });
+  
+  const originalPoints1 = inputData.map(d => ({
+    x: d.IRRADIATION, y: d.DC_POWER,
   }));
   
   
   tfvis.render.scatterplot(
-    {name: 'Model Predictions vs Original Data'}, 
+    {name: 'Irradiation vs AC Power',tab:'Result Charts'}, 
     {values: [originalPoints, predictedPoints], series: ['original', 'predicted']}, 
     {
-      xLabel: 'Horsepower',
-      yLabel: 'MPG',
+      xLabel: 'Irradiation',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
+  tfvis.render.scatterplot(
+    {name: 'Irradiation vs DC Power',tab:'Result Charts'}, 
+    {values: [originalPoints1, predictedPoints1], series: ['original', 'predicted']}, 
+    {
+      xLabel: 'Irradiation',
+      yLabel: 'DC POWER',
       height: 300
     }
   );
