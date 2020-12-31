@@ -1,27 +1,45 @@
 //TENSORFLOW----------------------------------------------------------->
 
-async function getData(){
-  var Datajson = 0;
-  var ref = database.ref('Plant_Generation+Sensor_Data/').orderByKey();
-  ref.on('value',(snapshot) => {
-    Datajson = snapshot.val();
-  });
-  const Data = await Datajson.json();
+async function getData() {
+
+  const DataResponse = await fetch('https://storage.googleapis.com/iot-solar-database.appspot.com/solar_dataset/Dataset_json.json');
+  const Data = await DataResponse.json();  
+  
   return Data;
 }
 
-/*console.log(tf+" "+tfvis);
-
-async function getData() {
-  const carsDataResponse = await fetch('https://storage.googleapis.com/tfjs-tutorials/carsData.json');  
-  const carsData = await carsDataResponse.json();  
-  const cleaned = carsData.map(car => ({
-    mpg: car.Miles_per_Gallon,
-    horsepower: car.Horsepower,
-  }))
-  .filter(car => (car.mpg != null && car.horsepower != null));
+function plotting(data) {
   
-  return cleaned;
+  const values = data.map(d => ({
+    x: d.IRRADIATION,
+    y: d.AC_POWER,
+  }));
+
+  const values1 = data.map(d => ({
+    x: d.AMBIENT_TEMPERATURE,
+    y: d.AC_POWER,
+  }));
+  
+  tfvis.render.scatterplot(
+    {name:'Irradiation v AC Power',tab:"Charts"},
+    {values: values}, 
+    {
+      xLabel: 'IRRADIATION',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
+  tfvis.render.scatterplot(
+    {name:'Ambient Temp. v AC Power',tab:"Charts"},
+    {values: values1}, 
+    {
+      xLabel: 'AMBIENT_TEMPERATURE',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
 }
 
 function createModel() {
@@ -29,20 +47,14 @@ function createModel() {
   const model = tf.sequential(); 
   
   // Add a single input layer
-  model.add(tf.layers.dense({inputShape: [1], units: 1, useBias: true}));
+  model.add(tf.layers.dense({inputShape: [3], units: 1, useBias: true}));
   
   // Add an output layer
-  model.add(tf.layers.dense({units: 1, useBias: true}));
+  model.add(tf.layers.dense({units: 2, useBias: true}));
 
   return model;
 }
 
-
-// Convert the input data to tensors that we can use for machine 
-// learning. We will also do the important best practices of _shuffling_
-// the data and _normalizing_ the data
-// MPG on the y-axis.
-///
 function convertToTensor(data) {
   // Wrapping these calculations in a tidy will dispose any 
   // intermediate tensors.
@@ -52,11 +64,27 @@ function convertToTensor(data) {
     tf.util.shuffle(data);
 
     // Step 2. Convert data to Tensor
-    const inputs = data.map(d => d.horsepower)
-    const labels = data.map(d => d.mpg);
+    const inputs_I  = data.map(d => d.IRRADIATION)
+    const inputs_AT = data.map(d => d.AMBIENT_TEMPERATURE)
+    const inputs_MT = data.map(d => d.MODULE_TEMPERATURE)
+    var inputs = [];
+    for(i=0;i<inputs_I.length;i++){
+      inputs[inputs.length]=inputs_I[i];
+      inputs[inputs.length]=inputs_AT[i];
+      inputs[inputs.length]=inputs_MT[i];
+    }
 
-    const inputTensor = tf.tensor2d(inputs, [inputs.length, 1]);
-    const labelTensor = tf.tensor2d(labels, [labels.length, 1]);
+    const labels_AC = data.map(d => d.AC_POWER);
+    const labels_DC = data.map(d => d.DC_POWER);
+
+    var labels = [];
+    for(i=0;i<labels_AC.length;i++){
+      labels[labels.length]=labels_AC[i];
+      labels[labels.length]=labels_DC[i];
+    }
+
+    const inputTensor = tf.tensor2d(inputs, [inputs.length/3, 3]);
+    const labelTensor = tf.tensor2d(labels, [labels.length/2, 2]);
 
     //Step 3. Normalize the data to the range 0 - 1 using min-max scaling
     const inputMax = inputTensor.max();
@@ -66,7 +94,6 @@ function convertToTensor(data) {
 
     const normalizedInputs = inputTensor.sub(inputMin).div(inputMax.sub(inputMin));
     const normalizedLabels = labelTensor.sub(labelMin).div(labelMax.sub(labelMin));
-
     return {
       inputs: normalizedInputs,
       labels: normalizedLabels,
@@ -95,7 +122,7 @@ async function trainModel(model, inputs, labels) {
     epochs,
     shuffle: true,
     callbacks: tfvis.show.fitCallbacks(
-      { name: 'Training Performance' },
+      { name: 'Training Performance', tab:'Model Training' },
       ['loss', 'mse'], 
       { height: 200, callbacks: ['onEpochEnd'] }
     )
@@ -109,9 +136,24 @@ function testModel(model, inputData, normalizationData) {
   // We un-normalize the data by doing the inverse of the min-max scaling 
   // that we did earlier.
   const [xs, preds] = tf.tidy(() => {
+
+    const inputs_I  = inputData.map(d => d.IRRADIATION)
+    const inputs_AT = inputData.map(d => d.AMBIENT_TEMPERATURE)
+    const inputs_MT = inputData.map(d => d.MODULE_TEMPERATURE)
+    var inputs = [];
+    for(i=0;i<inputs_I.length;i++){
+      if(inputs_I[i]>1){
+        inputs[inputs.length]=inputs_I[i];
+        inputs[inputs.length]=inputs_AT[i];
+        inputs[inputs.length]=inputs_MT[i];
+      }
+    }   
     
-    const xs = tf.linspace(0, 1, 100);      
-    const preds = model.predict(xs.reshape([100, 1]));      
+    const inputTensor = tf.tensor2d(inputs, [inputs.length/3, 3]);
+    const normalizedInputs = inputTensor.sub(inputMin).div(inputMax.sub(inputMin));
+    const xs = normalizedInputs;
+    //const xs = tf.linspace(0, 1, 100);      
+    const preds = model.predict(xs);      
     
     const unNormXs = xs
       .mul(inputMax.sub(inputMin))
@@ -124,50 +166,92 @@ function testModel(model, inputData, normalizationData) {
     // Un-normalize the data
     return [unNormXs.dataSync(), unNormPreds.dataSync()];
   });
-  
- 
-  const predictedPoints = Array.from(xs).map((val, i) => {
-    return {x: val, y: preds[i]}
+
+  var xs_arr = Array.from(xs);
+  var preds_arr = Array.from(preds);
+  var irr_arr = [];
+  var at_arr = [];
+  var mt_arr = [];
+  var ac_arr = [];
+  var dc_arr = [];
+
+  for(i=0;i<preds_arr.length;i++){
+    if(i%2==0){
+      ac_arr[ac_arr.length] = preds_arr[i];
+    }else{
+      dc_arr[dc_arr.length] = preds_arr[i];
+    }
+  }
+
+  for(i=0;i<xs_arr.length;i++){
+    irr_arr[irr_arr.length] = xs_arr[i];
+    i++;
+    at_arr[at_arr.length] = xs_arr[i];
+    i++;
+    mt_arr[mt_arr.length] = xs_arr[i];
+  }
+
+  console.log(irr_arr);
+  console.log(ac_arr);
+
+  var o = [];
+  for(i=0;i<irr_arr.length;i++){
+    var x = {
+      'IRRADIATION':irr_arr[i],
+      'AMBIENT_TEMPERATURE':at_arr[i],
+      'MODULE_TEMPERATURE':mt_arr[i],
+      'AC_POWER':ac_arr[i],
+      'DC_POWER':dc_arr[i]
+    };
+    o.push(x);
+  }
+
+  const predictedPoints = o.map(d => {
+    return {x: d.IRRADIATION, y: d.AC_POWER,};
   });
   
   const originalPoints = inputData.map(d => ({
-    x: d.horsepower, y: d.mpg,
+    x: d.IRRADIATION, y: d.AC_POWER,
+  }));
+
+  const predictedPoints1 = o.map(d => {
+    return {x: d.IRRADIATION, y: d.DC_POWER,};
+  });
+  
+  const originalPoints1 = inputData.map(d => ({
+    x: d.IRRADIATION, y: d.DC_POWER,
   }));
   
   
   tfvis.render.scatterplot(
-    {name: 'Model Predictions vs Original Data'}, 
+    {name: 'Irradiation vs AC Power',tab:'Result Charts'}, 
     {values: [originalPoints, predictedPoints], series: ['original', 'predicted']}, 
     {
-      xLabel: 'Horsepower',
-      yLabel: 'MPG',
+      xLabel: 'Irradiation',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
+  tfvis.render.scatterplot(
+    {name: 'Irradiation vs DC Power',tab:'Result Charts'}, 
+    {values: [originalPoints1, predictedPoints1], series: ['original', 'predicted']}, 
+    {
+      xLabel: 'Irradiation',
+      yLabel: 'DC POWER',
       height: 300
     }
   );
 }
 
-async function run() {
+async function run(){
   // Load and plot the original input data that we are going to train on.
   const data = await getData();
-  const values = data.map(d => ({
-    x: d.horsepower,
-    y: d.mpg,
-  }));
-
-  tfvis.render.scatterplot(
-    {name: 'Horsepower v MPG'},
-    {values}, 
-    {
-      xLabel: 'Horsepower',
-      yLabel: 'MPG',
-      height: 300
-    }
-  );
-
+  plotting(data);
   // Create the model
   const model = createModel();  
-  tfvis.show.modelSummary({name: 'Model Summary'}, model);
-
+  tfvis.show.modelSummary({name: 'Model Summary',tab:"Model Summary"}, model);
+  
   // Convert the data to a form we can use for training.
   const tensorData = convertToTensor(data);
   const {inputs, labels} = tensorData;
@@ -175,16 +259,10 @@ async function run() {
   // Train the model  
   await trainModel(model, inputs, labels);
   console.log('Done Training');
+
   // Make some predictions using the model and compare them to the
   // original data
   testModel(model, data, tensorData);
-}
-*/
-
-async function run(){
-  // Load and plot the original input data that we are going to train on.
-  const data = await getData();
-  console.log(data);
 }
 
 $(document).ready(function(){
@@ -194,5 +272,6 @@ $(document).ready(function(){
 
   });
 });
+
 
 //END TENSORFLOW------------------------------------------------------->

@@ -37,6 +37,12 @@ function initial(){
     });
   }
 
+  if(document.querySelector('#jumboML')!= null){
+    storage.ref('img/23148.jpg').getDownloadURL().then(function(url){
+      document.querySelector('#jumboML').style="background-image: linear-gradient(to bottom, rgba(0,0,0,0.6) 0%,rgba(0,0,0,0.6) 100%), url("+url+")";
+    });
+  }
+
   storage.ref('img/solar-house.png').getDownloadURL().then(function(url){
     document.querySelector('#icon').href=url;
   });
@@ -315,69 +321,3 @@ $(document).ready(function(){
   });
 
 });
-
-/*$(document).ready(function(){
-  $("#show_plot_power").click(function(){
-    var arr = [];
-    var AC = [];
-    var CD = [];
-    var ye = [];
-    showLoading('chart_power');
-    var querypowerlimit = querypower.limitToLast(300);
-    querypower.on('value', (snapshot) => {
-      snapshot.forEach(function(childSnapshot){
-        var AC_p = childSnapshot.val().AC_POWER;
-        var CD_p = childSnapshot.val().DC_POWER;
-        var dailyyield = childSnapshot.val().DAILY_YIELD;
-        var date = childSnapshot.val().DATE_TIME;
-        var time = date[date.length-5]+date[date.length-4]+date[date.length-3]+date[date.length-2]+date[date.length-1];
-        if(time<'12:45'){
-          AC[AC.length] = AC_p;
-          CD[CD.length] = CD_p;
-          ye[ye.length] = dailyyield;
-        }else{
-          var aAC = avg_array(AC);
-          var aCD = avg_array(CD);
-          var aYe = avg_array(ye);
-          if (AC.length != 0){
-            arr[arr.length] = [date,(aAC+AC_p)/2,(aCD+CD_p)/2,(aYe+dailyyield)/2];
-          }
-          AC = [];
-          CD = [];
-          ye = [];
-        }
-      });
-      snapshot.forEach(function(childSnapshot){
-        var AC_p = childSnapshot.val().AC_POWER;
-        var CD_p = childSnapshot.val().DC_POWER;
-        var dailyyield = childSnapshot.val().DAILY_YIELD;
-        var date = childSnapshot.val().DATE_TIME;
-        var a = '';
-        var b = 0;
-        var time = date[date.length-5]+date[date.length-4]+date[date.length-3]+date[date.length-2]+date[date.length-1];
-        if(time>'12:45'){
-          b = AC.length;
-          AC[AC.length] = AC_p;
-          CD[CD.length] = CD_p;
-          ye[ye.length] = dailyyield;
-          a = date;
-        }
-        
-        if(AC.length != 0){
-          var aAC = avg_array(AC);
-          var aCD = avg_array(CD);
-          var aYe = avg_array(ye);
-          arr[arr.length] = [a,aAC*2-AC_p,aCD*2-CD_p,aYe*2-dailyyield];
-          AC = [];
-          CD = [];
-          ye = [];
-        }
-        
-      });
-    });
-    console.log(arr);
-    power_chart(arr,'chart_power');
-    document.getElementById('show_plot_power').innerHTML = "Click to Refresh Chart";
-  });
-
-});*/
