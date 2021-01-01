@@ -153,7 +153,7 @@
 
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
   <!-- Initialize Firebase -->
-  <script src="index.js"></script>
+  <script src="script.js"></script>
   <script>
 //TENSORFLOW----------------------------------------------------------->
 
@@ -283,16 +283,18 @@ async function trainModel(model, inputs, labels) {
   
   const batchSize = 32;
   const epochs = 50;
+  var es = tf.callbacks.earlyStopping({monitor: 'loss'})
+  var plot_loss = tfvis.show.fitCallbacks(
+      { name: 'Training Performance', tab:'Model Training' },
+      ['loss', 'mse'], 
+      { height: 200, callbacks: ['onEpochEnd'] }
+    );
   
   return await model.fit(inputs, labels, {
     batchSize,
     epochs,
     shuffle: true,
-    callbacks: tfvis.show.fitCallbacks(
-      { name: 'Training Performance', tab:'Model Training' },
-      ['loss', 'mse'], 
-      { height: 200, callbacks: ['onEpochEnd'] }
-    )
+    callbacks: plot_loss,es
   });
 }
 
@@ -357,9 +359,6 @@ function testModel(model, inputData, normalizationData) {
     i++;
     mt_arr[mt_arr.length] = xs_arr[i];
   }
-
-  console.log(irr_arr);
-  console.log(ac_arr);
 
   var o = [];
   for(i=0;i<irr_arr.length;i++){
