@@ -26,6 +26,6 @@ html {
   background-size: cover;
 }
 
-#chart_gyro, #chart_power {
+#chart_gyro, #chart_power, #stats {
   overflow-x: auto;
 }

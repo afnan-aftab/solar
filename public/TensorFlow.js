@@ -1,5 +1,13 @@
 //TENSORFLOW----------------------------------------------------------->
 
+document.addEventListener("DOMContentLoaded", initial);
+
+function initial(){
+  tfvis.visor();
+  tfvis.visor().close();
+  plot_html();
+}
+
 async function getData() {
 
   const DataResponse = await fetch('https://storage.googleapis.com/iot-solar-database.appspot.com/solar_dataset/Dataset_json.json');
@@ -8,38 +16,11 @@ async function getData() {
   return Data;
 }
 
-function plotting(data) {
-  
-  const values = data.map(d => ({
-    x: d.IRRADIATION,
-    y: d.AC_POWER,
-  }));
-
-  const values1 = data.map(d => ({
-    x: d.AMBIENT_TEMPERATURE,
-    y: d.AC_POWER,
-  }));
-  
-  tfvis.render.scatterplot(
-    {name:'Irradiation v AC Power',tab:"Charts"},
-    {values: values}, 
-    {
-      xLabel: 'IRRADIATION',
-      yLabel: 'AC Power',
-      height: 300
-    }
-  );
-
-  tfvis.render.scatterplot(
-    {name:'Ambient Temp. v AC Power',tab:"Charts"},
-    {values: values1}, 
-    {
-      xLabel: 'AMBIENT_TEMPERATURE',
-      yLabel: 'AC Power',
-      height: 300
-    }
-  );
-
+async function loadModel() {
+  const model = await tf.loadLayersModel('JSmodel.json');
+  model.predict(tf.tensor2d([-0.1,0.2,0.3],[1,3])).print();
+  console.log('lol;');
+  return model;
 }
 
 function createModel() {
@@ -47,7 +28,9 @@ function createModel() {
   const model = tf.sequential(); 
   
   // Add a single input layer
-  model.add(tf.layers.dense({inputShape: [3], units: 1, useBias: true}));
+  model.add(tf.layers.dense({inputShape: [3], units: 20, activation:'relu', kernel_initializer:'he_uniform', useBias: true}));
+
+  // adding extra layers
   
   // Add an output layer
   model.add(tf.layers.dense({units: 2, useBias: true}));
@@ -116,16 +99,18 @@ async function trainModel(model, inputs, labels) {
   
   const batchSize = 32;
   const epochs = 50;
+  var es = tf.callbacks.earlyStopping({monitor: 'loss'})
+  var plot_loss = tfvis.show.fitCallbacks(
+      { name: 'Training Performance', tab:'Model Training' },
+      ['loss', 'mse'], 
+      { height: 200, callbacks: ['onEpochEnd'] }
+    );
   
   return await model.fit(inputs, labels, {
     batchSize,
     epochs,
     shuffle: true,
-    callbacks: tfvis.show.fitCallbacks(
-      { name: 'Training Performance', tab:'Model Training' },
-      ['loss', 'mse'], 
-      { height: 200, callbacks: ['onEpochEnd'] }
-    )
+    callbacks: plot_loss,es
   });
 }
 
@@ -142,7 +127,7 @@ function testModel(model, inputData, normalizationData) {
     const inputs_MT = inputData.map(d => d.MODULE_TEMPERATURE)
     var inputs = [];
     for(i=0;i<inputs_I.length;i++){
-      if(inputs_I[i]>1){
+      if(inputs_I[i]>0){
         inputs[inputs.length]=inputs_I[i];
         inputs[inputs.length]=inputs_AT[i];
         inputs[inputs.length]=inputs_MT[i];
@@ -190,9 +175,6 @@ function testModel(model, inputData, normalizationData) {
     i++;
     mt_arr[mt_arr.length] = xs_arr[i];
   }
-
-  console.log(irr_arr);
-  console.log(ac_arr);
 
   var o = [];
   for(i=0;i<irr_arr.length;i++){
@@ -244,13 +226,108 @@ function testModel(model, inputData, normalizationData) {
   );
 }
 
+async function plot_html(){
+  const data = await getData();
+
+  const values = data.map(d => ({
+    x: d.IRRADIATION,
+    y: d.AC_POWER,
+  }));
+
+  tfvis.render.scatterplot(
+    document.getElementById('IrrvAC'),
+    {values: values}, 
+    {
+      xLabel: 'IRRADIATION',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
+  const values1 = data.map(d => ({
+    x: d.AMBIENT_TEMPERATURE,
+    y: d.AC_POWER,
+  }));
+
+  tfvis.render.scatterplot(
+    document.getElementById('AtempvAC'),
+    {values: values1}, 
+    {
+      xLabel: 'Ambient Temperature',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
+  const values2 = data.map(d => ({
+    x: d.MODULE_TEMPERATURE,
+    y: d.AC_POWER,
+  }));
+
+  tfvis.render.scatterplot(
+    document.getElementById('MtempvAC'),
+    {values: values2}, 
+    {
+      xLabel: 'Module Temperature',
+      yLabel: 'AC Power',
+      height: 300
+    }
+  );
+
+  const values3 = data.map(d => ({
+    x: d.IRRADIATION,
+    y: d.DC_POWER,
+  }));
+
+  tfvis.render.scatterplot(
+    document.getElementById('IrrvDC'),
+    {values: values3}, 
+    {
+      xLabel: 'IRRADIATION',
+      yLabel: 'DC Power',
+      height: 300
+    }
+  );
+
+  const values4 = data.map(d => ({
+    x: d.AMBIENT_TEMPERATURE,
+    y: d.DC_POWER,
+  }));
+
+  tfvis.render.scatterplot(
+    document.getElementById('AtempvDC'),
+    {values: values4}, 
+    {
+      xLabel: 'Ambient Temperature',
+      yLabel: 'DC Power',
+      height: 300
+    }
+  );
+
+  const values5 = data.map(d => ({
+    x: d.MODULE_TEMPERATURE,
+    y: d.DC_POWER,
+  }));
+
+  tfvis.render.scatterplot(
+    document.getElementById('MtempvDC'),
+    {values: values}, 
+    {
+      xLabel: 'Module Temperature',
+      yLabel: 'DC Power',
+      height: 300
+    }
+  );
+
+}
+
 async function run(){
   // Load and plot the original input data that we are going to train on.
   const data = await getData();
-  plotting(data);
   // Create the model
   const model = createModel();  
   tfvis.show.modelSummary({name: 'Model Summary',tab:"Model Summary"}, model);
+  tfvis.show.layer({name: 'Model Layers',tab:"Model Summary"}, model.getLayer(undefined, 1));
   
   // Convert the data to a form we can use for training.
   const tensorData = convertToTensor(data);
@@ -266,12 +343,12 @@ async function run(){
 }
 
 $(document).ready(function(){
-  $("#storage-butt").click(function(){
+  $("#trainmodel").click(function(){
 
+    tfvis.visor().open();
     run();
 
   });
 });
-
 
 //END TENSORFLOW------------------------------------------------------->
