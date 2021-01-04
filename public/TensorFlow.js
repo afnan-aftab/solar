@@ -8,6 +8,8 @@ function initial(){
   plot_html();
 }
 
+var model_save;
+
 async function getData() {
 
   const DataResponse = await fetch('https://storage.googleapis.com/iot-solar-database.appspot.com/solar_dataset/Dataset_json.json');
@@ -16,21 +18,15 @@ async function getData() {
   return Data;
 }
 
-async function loadModel() {
-  const model = await tf.loadLayersModel('JSmodel.json');
-  model.predict(tf.tensor2d([-0.1,0.2,0.3],[1,3])).print();
-  console.log('lol;');
-  return model;
-}
-
 function createModel() {
   // Create a sequential model
   const model = tf.sequential(); 
   
   // Add a single input layer
-  model.add(tf.layers.dense({inputShape: [3], units: 20, activation:'relu', kernel_initializer:'he_uniform', useBias: true}));
+  model.add(tf.layers.dense({inputShape: [3], units: 64, activation:'relu'}));
 
   // adding extra layers
+  model.add(tf.layers.dense({units: 64, activation: 'relu'}));
   
   // Add an output layer
   model.add(tf.layers.dense({units: 2, useBias: true}));
@@ -98,7 +94,7 @@ async function trainModel(model, inputs, labels) {
   });
   
   const batchSize = 32;
-  const epochs = 50;
+  const epochs = 40;
   var es = tf.callbacks.earlyStopping({monitor: 'loss'})
   var plot_loss = tfvis.show.fitCallbacks(
       { name: 'Training Performance', tab:'Model Training' },
@@ -325,7 +321,14 @@ async function run(){
   // Load and plot the original input data that we are going to train on.
   const data = await getData();
   // Create the model
-  const model = createModel();  
+  let model;
+
+  if(model_save != undefined){
+    model = model_save;
+  }else{
+    model = createModel();
+  }
+
   tfvis.show.modelSummary({name: 'Model Summary',tab:"Model Summary"}, model);
   tfvis.show.layer({name: 'Model Layers',tab:"Model Summary"}, model.getLayer(undefined, 1));
   
@@ -340,6 +343,11 @@ async function run(){
   // Make some predictions using the model and compare them to the
   // original data
   testModel(model, data, tensorData);
+  model_save = model;
+}
+
+async function downloadModel(nameValue){
+  await model_save.save('downloads://'+nameValue);
 }
 
 $(document).ready(function(){
@@ -349,6 +357,65 @@ $(document).ready(function(){
     run();
 
   });
+});
+
+$(document).ready(function(){
+  $("#trainmodel").click(function(){
+
+    tfvis.visor().open();
+    run();
+
+  });
+});
+
+$(document).ready(function(){
+  $("#save_model").click(function(){
+    if(model_save != undefined){
+      $("#saveModal").modal('toggle')
+    }else{
+      alert(location.hostname+'\nNo existing model to save');
+    }
+  });
+  
+});
+
+$(document).ready(function(){
+  $("#submit_btn").click(function(){
+
+    var nameValue = document.getElementById("modelname").value;
+
+    if(nameValue == ''){
+      alert(location.hostname+'\nInvalid name!');
+    }else{
+      downloadModel(nameValue);
+      alert(location.hostname+'\nYour currently loaded model "'+nameValue+'" will start downloading');
+    }
+    
+  });
+  
+});
+
+$(document).ready(function(){
+  $("#load_model").click(function(){
+    $("#loadModal").modal('toggle')
+  });
+});
+
+$(document).ready(function(){
+  $("#submit_btn_load").click(async function(){
+
+    var radio_value;
+
+    if (document.getElementById('r1').checked) {
+      model_save = await tf.loadLayersModel('ML_models/DNN_Model_test.json');
+      radio_value = document.getElementById('r1').value;
+    }else if(document.getElementById('r2').checked) {
+      model_save = await tf.loadLayersModel('ML_models/Linear_Regression.json');
+      radio_value = document.getElementById('r2').value;
+    }
+    alert(location.hostname+'\n'+radio_value+' Model has been loaded');
+  });
+  
 });
 
 //END TENSORFLOW------------------------------------------------------->

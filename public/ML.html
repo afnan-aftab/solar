@@ -103,6 +103,8 @@
 
   <!--------Login Modal End-------->
 
+  
+
   <main role="main">
 
     <!--------- Jumbotron --------->
@@ -151,6 +153,101 @@
 
     </div>
 
+    <div class="container">
+      <div id="heading" class="row">
+        <div class="col-lg-12 bg-dark text-light text-center">
+          <h2> ML Model Handling</h2>
+        </div>
+
+        <div class="row">
+
+          <div id="loadmodeltile" class="col-md-4">
+            <h2>Load Model</h2>
+            <p>Load a pre-trained model and use it to make predictions</p>
+            <p><a id="load_model" class="btn btn-secondary" role="button">View details &raquo;</a></p>
+          </div>
+
+          <div class="col-md-4">
+            <h2>Train model</h2>
+            <p>Build and train the model by yourself here in browser.</p>
+            <p><a id="trainmodel" class="btn btn-secondary"  role="button">View details &raquo;</a></p>
+          </div>
+
+          <div class="col-md-4">
+            <h2>Save model</h2>
+            <p>Save your model and download it.</p>
+            <p><a id="save_model" class="btn btn-secondary" role="button">View details &raquo;</a></p>
+          </div>
+
+          
+
+        </div>
+      </div>
+
+    </div>
+
+    <!---------- Save Model ---------->
+
+    <div id="saveModal" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-lg" role="content">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Download Your Model</h4>
+                  <button type="button" class="close" data-dismiss="modal">
+                      &times;
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form>
+                      <div class="form-row">
+                          <div class="form-group col-lg-12">
+                                  <label class="sr-only" for="modelname">Model Name</label>
+                                  <input type="text" class="form-control form-control-sm mr-1" id="modelname" placeholder="Enter Name">
+                          </div>
+                      </div>
+                      <div class="form-row">
+                          <button type="button" class="btn btn-secondary btn-sm ml-auto" data-dismiss="modal">Cancel</button>
+                          <button type="button" id="submit_btn" class="btn btn-primary btn-sm ml-1" data-dismiss="modal">Download</button>        
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>  
+
+    <!---------- END Save Model ---------->
+
+    <!---------- Load Model ---------->
+
+    <div id="loadModal" class="modal fade" role="dialog">
+      <div class="modal-dialog modal-lg" role="content">
+          <div class="modal-content">
+              <div class="modal-header">
+                  <h4 class="modal-title">Load Pre-Trained Model</h4>
+                  <button type="button" class="close" data-dismiss="modal">
+                      &times;
+                  </button>
+              </div>
+              <div class="modal-body">
+                  <form>
+                      <div class="form-row">
+                          <div class="form-group col-lg-12">
+                            <label class="radio-inline"><input id="r1" value="DNN" type="radio" name="optradio" checked>DNN Model</label>
+                            <label class="radio-inline"><input id="r2" value="Linear regression" type="radio" name="optradio">Linear Regression Model</label>
+                          </div>
+                      </div>
+                      <div class="form-row">
+                          <button type="button" class="btn btn-secondary btn-sm ml-auto" data-dismiss="modal">Cancel</button>
+                          <button type="button" id="submit_btn_load" class="btn btn-primary btn-sm ml-1" data-dismiss="modal">Load</button>        
+                      </div>
+                  </form>
+              </div>
+          </div>
+      </div>
+    </div>  
+
+    <!---------- END Load Model ---------->
+
   </main>
 
   <!--------To top Button-------->
@@ -175,6 +272,9 @@
   <!-- Initialize Firebase -->
   <script src="script.js"></script>
   <script src="TensorFlow.js"></script>
+  <script>
+
+  </script>
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
 
 
