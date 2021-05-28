@@ -165,29 +165,88 @@
   </div>
 
 <!--------Readmore Modal End-------->
-
     <div class="container">
-      <!-- Example row of columns -->
-      <div class="row">
-        <div class="col-md-4">
-          <h2>Gyro</h2>
-          <p>Master node data transmitted and is bieng updated in real time.</p>
-          <p><a class="btn btn-secondary" href="Gyro.html" role="button">View details &raquo;</a></p>
+        <!-- Example row of columns -->
+        
+        <div class="row">
+          <div class="text-center col-xl-12">
+            <h2>Sensor Network</h2>
+            <p>Status of Network</p>
+            <h2 id="LED"><span class="badge badge-pill badge-dark">Unavailable</span></h2>
+          </div>
         </div>
-        <div class="col-md-4">
-          <h2>Power Plant</h2>
-          <p>This data has been gathered at a solar power plants in over a 34 day period. It has two kinds of data representation - a table and a scatter plot. This data shows the power generation dataset. The power generation datasets are gathered at the inverter level which inverter has multiple lines of solar panels attached to it.</p>
-          <p><a class="btn btn-secondary" href="power-plant.html" role="button">View details &raquo;</a></p>
+        
+        <hr>
+        
+        
+        <div class="row">
+          <div class="col-md-6">
+            <h2>Appliance 1</h2>
+            <p id="status_appl1">
+                Status<span class="badge badge-pill badge-dark">Unavailable</span>
+            </p>
+            <p><a id="appl1_but" class="btn btn-primary" role="button">Switch</a></p>
+            <div class="container">
+              <table class="table table-hover table-responsive">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Axis</th>
+                    <th scope="col">Angular Velocity (m/s)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">X</th>
+                    <td id="Gx">-</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Y</th>
+                    <td id="Gy">-</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Z</th>
+                    <td id="Gz">-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
+          <div class="col-md-6">
+            <h2>Appliance 2</h2>
+            <p id="status_appl2">
+                Status
+                <span class="badge badge-pill badge-dark">Unavailable</span>
+            </p>
+            <p><a id="appl2_but" class="btn btn-primary" role="button">Switch</a></p>
+            <div class="container">
+              <table class="table table-hover table-responsive">
+                <thead class="thead-dark">
+                  <tr>
+                    <th scope="col">Axis</th>
+                    <th scope="col">Angular Acceleration (m/s<sup>2</sup>)</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  <tr>
+                    <th scope="row">X</th>
+                    <td id="Ax">-</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Y</th>
+                    <td id="Ay">-</td>
+                  </tr>
+                  <tr>
+                    <th scope="row">Z</th>
+                    <td id="Az">-</td>
+                  </tr>
+                </tbody>
+              </table>
+            </div>
+          </div>
         </div>
-        <div class="col-md-4">
-          <h2>Machine Learning</h2>
-          <p>The data gathered from the power plant is bieng shown and you can also see the relationship between different quantities in the form of scatter plots for better visualization of data. Moreover, you can build model, train it and even predict power output from the model.</p>
-          <p><a class="btn btn-secondary" href="ML.html" role="button">View details &raquo;</a></p>
-        </div>
-      </div>
-
-      <hr>
-
+  
+        <hr>      
+  
     </div> <!-- /container -->
 
   </main>
@@ -200,8 +259,8 @@
   <footer class="page-footer font-small bg-dark footer-dark text-light">
 
     <!-- Copyright -->
-    <div class="footer-copyright text-center py-3">© 2020 Copyright:
-      <a href="https://www.instagram.com/afnan_aftab/"> Afnan Aftab</a>
+    <div class="footer-copyright text-center py-3">© 2021 Copyright:
+      <a href="https://www.instagram.com/afnan_aftab/"> M. Afnan Aftab</a>
     </div>
     <!-- Copyright -->
   
@@ -211,8 +270,7 @@
 
 
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
-  <!-- Initialize Firebase -->
-  <script src="script.js"></script>
+  <script src="appliance.js"></script>
 <!-- 🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥🔥 -->
 
 
