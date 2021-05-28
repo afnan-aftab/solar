@@ -49,10 +49,10 @@ function initial(){
   query1.on('value', (snapshot)=>{
     var status = snapshot.val().status;
     console.log(status);
-    if(status==1)
+    if(status==true)
     {
       document.getElementById('status_appl1').innerHTML = "Status<span class=\"badge badge-pill badge-success\">ON</span>";
-    }else if(status==0)
+    }else if(status==false)
     {
       document.getElementById('status_appl1').innerHTML = "Status<span class=\"badge badge-pill badge-danger\">OFF</span>";
     }
@@ -61,10 +61,10 @@ function initial(){
   query2.on('value', (snapshot)=>{
     var status = snapshot.val().status;
     console.log(status);
-    if(status==1)
+    if(status==true)
     {
       document.getElementById('status_appl2').innerHTML = "Status<span class=\"badge badge-pill badge-success\">ON</span>";
-    }else if(status==0)
+    }else if(status==false)
     {
       document.getElementById('status_appl2').innerHTML = "Status<span class=\"badge badge-pill badge-danger\">OFF</span>";
     }
@@ -82,12 +82,12 @@ document.getElementById('appl1_but').addEventListener('click',function(){
   query1.once('value',(snapshot)=>{
     var status = snapshot.val().status;
     var ref = database.ref('Appl1/status');
-    if(status==1)
+    if(status==true)
     {
-      ref.set(0);
+      ref.set(false);
     }else
     {
-      ref.set(1);
+      ref.set(true);
     }
   });
 
@@ -99,12 +99,12 @@ document.getElementById('appl2_but').addEventListener('click',function(){
   query2.once('value',(snapshot)=>{
     var status = snapshot.val().status;
     var ref = database.ref('Appl2/status');
-    if(status==1)
+    if(status==true)
     {
-      ref.set(0);
+      ref.set(false);
     }else
     {
-      ref.set(1);
+      ref.set(true);
     }
   });
 
