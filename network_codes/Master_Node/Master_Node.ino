@@ -16,11 +16,15 @@
 
 RF24 radio(D4, D2); // CE, CSN
 
-const byte addresses[][6] = {
+uint64_t addresses[6] = {0x7878787878LL,
+                       0xB3B4B5B6F1LL,
+                      };
+
+/*const byte addresses[][6] = {
   "00001",
   "00002"
 }; //Setting the two addresses. One for transmitting and one for receiving
-
+*/
 //======WiFi Credentials
 const char * ssid = "D-6";
 const char * pass = "1304f7e4";
@@ -66,8 +70,9 @@ bool switch_packet[3] = {
 
 bool report;
 unsigned long tim;
-unsigned long period = 5000;
-bool newData;
+unsigned long period = 5000*4;
+bool nodeTurn = LOW;
+bool newData = LOW;
 bool nodeState[2] = {
   LOW,
   LOW
@@ -105,12 +110,11 @@ void setup() {
   //radio.openWritingPipe(addresses[1]);      //send the data to 00001 & 00004
   //radio.openWritingPipe(addresses[0]);
   radio.openReadingPipe(1, addresses[1]); //receive the data from 00002
-  radio.openReadingPipe(1, addresses[0]); //receive the data from 00001
+  radio.openReadingPipe(0, addresses[0]); //receive the data from 00001
   radio.setPALevel(RF24_PA_MIN); //You can set it as minimum or maximum depending on the distance between the transmitter and receiver.
   radio.startListening();
   attachInterrupt(digitalPinToInterrupt(5), DataRecieve, FALLING);
   tim = millis();
-  newData = LOW;
   delay(10);
 
 }
@@ -137,6 +141,8 @@ ICACHE_RAM_ATTR void DataRecieve() {
   Serial.println(appl_data[2]);
 
   newData = HIGH;
+
+  
 
 }
 
@@ -195,12 +201,16 @@ void updateDatabase() {
 void dataCheck(unsigned long a) {
 
   if (millis() - tim > a) {
-
     radio.stopListening();
-    for (int n = 0; n < 2; n++) {
-      radio.openWritingPipe(addresses[n]);
-      switch_packet[0] = n;
+      if(nodeTurn==LOW){
+        radio.openWritingPipe(addresses[0]);
+      }else{
+        radio.openWritingPipe(addresses[1]);
+      }
+      
+      switch_packet[0] = nodeTurn;
       switch_packet[1] = LOW;
+      radio.setRetries(2,3);
       report = radio.write( & switch_packet, sizeof(switch_packet));
       if (!report) {
         Serial.println("Failed! Transmission");
@@ -213,7 +223,7 @@ void dataCheck(unsigned long a) {
         Serial.print("State:");
         Serial.println("LOL XD");
       }
-    }
+    nodeTurn=!nodeTurn;
     radio.startListening();
     tim = millis();
   }
@@ -224,7 +234,6 @@ void statusCheck() {
   for (int n = 0; n < 2; n++) {
 
     String path = "/Appl" + String(n + 1) + "/status";
-    Serial.println(path);
     if (Firebase.getBool(fbdo, path)) {
       bool data = fbdo.boolData();
       Serial.println(data);
@@ -234,6 +243,7 @@ void statusCheck() {
         switch_packet[0] = n;
         switch_packet[1] = HIGH;
         switch_packet[2] = data;
+        radio.setRetries(2,3);
         report = radio.write( & switch_packet, sizeof(switch_packet));
         if (!report) {
           Serial.println("Failed! Transmission");
