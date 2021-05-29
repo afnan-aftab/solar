@@ -20,6 +20,11 @@ var storage = firebase.storage();
 // VARIABLES -------------------->
 var query1 = database.ref('Appl1');
 var query2 = database.ref('Appl2');
+
+var query3 = database.ref('Appl1_data').orderByKey();
+var query4 = database.ref('Appl2_data').orderByKey();
+
+var snippet_table = "<tr><th scope=\"row\">{{DATE}}</th><td>{{DAY}}</td><td>{{TIME}}</td><td>{{POWER}}</td></tr>";
 // END VARIABLES -------------------->
 
 
@@ -68,6 +73,44 @@ function initial(){
     {
       document.getElementById('status_appl2').innerHTML = "Status<span class=\"badge badge-pill badge-danger\">OFF</span>";
     }
+  });
+
+  query3.limitToLast(1).on('value', (snapshot) => {
+    snapshot.forEach(function(childSnapshot){
+      var key = childSnapshot.key;
+      var power = childSnapshot.val().power;
+      var day = childSnapshot.val().timestamp.day;
+      var date = childSnapshot.val().timestamp.date;
+      var time = childSnapshot.val().timestamp.time;
+
+      var h = snippet_table.replace("{{DATE}}",date);
+      h = h.replace("{{DAY}}",day);
+      h = h.replace("{{TIME}}",time);
+      h = h.replace("{{POWER}}",power);
+      console.log(key);
+
+      document.getElementById('table1').innerHTML = h;
+
+    });
+  });
+
+  query4.limitToLast(1).on('value', (snapshot) => {
+    snapshot.forEach(function(childSnapshot){
+      var key = childSnapshot.key;
+      var power = childSnapshot.val().power;
+      var day = childSnapshot.val().timestamp.day;
+      var date = childSnapshot.val().timestamp.date;
+      var time = childSnapshot.val().timestamp.time;
+
+      var h = snippet_table.replace("{{DATE}}",date);
+      h = h.replace("{{DAY}}",day);
+      h = h.replace("{{TIME}}",time);
+      h = h.replace("{{POWER}}",power);
+      console.log(key);
+
+      document.getElementById('table2').innerHTML=h;
+
+    });
   });
 
   
