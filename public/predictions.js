@@ -54,7 +54,7 @@ function initial(){
 }
 // END Initial function ----------------------------->
 
-function displayChart(arr,div,tit){
+function displayChart(arr,div,tit,mean){
 
   google.charts.load('current', {'packages':['line']});
   google.charts.setOnLoadCallback(drawChart);
@@ -71,7 +71,7 @@ function drawChart() {
     var options = {
       chart: {
         title: tit,
-        subtitle: 'Values in Watts'
+        subtitle: 'Mean Error (kW): '+String(mean)
       },
       width: 900,
       height: 500
@@ -84,7 +84,7 @@ function drawChart() {
 
 }
 
-function displayChart1(arr,div,tit){
+function displayChart1(arr,div,tit,mean){
 
   google.charts.load('current', {'packages':['line']});
   google.charts.setOnLoadCallback(drawChart);
@@ -101,7 +101,7 @@ function drawChart() {
     var options = {
       chart: {
         title: tit,
-        subtitle: 'Values in W/m2 (3 Jan 2010 - 9 Jan 2010)'
+        subtitle: 'Mean Error (kW/m2): '+String(mean)
       },
       width: 900,
       height: 500
@@ -156,9 +156,32 @@ $(document).ready(function(){
 function lol(){
   
     var arr2 = [];
+    var err = [];
       query1.once('value', (snapshot) => {
           arr2 = [['Sunday',snapshot.val().sun_p,snapshot.val().sun_a],['Monday',snapshot.val().mon_p,snapshot.val().mon_a],['Tuesday',snapshot.val().tue_p,snapshot.val().tue_a],['Wednesday',snapshot.val().wed_p,snapshot.val().wed_a],['Thursday',snapshot.val().wed_p,snapshot.val().wed_a],['Friday',snapshot.val().fri_p,snapshot.val().fri_a],['Saturday',snapshot.val().sat_p,snapshot.val().sat_a]]
-          displayChart(arr2,'consumption', 'Prediction vs Actual Consumption');
+          for(var j=0;j<arr2.length;j++){
+            err[j]=Math.abs(arr2[j][1]-arr2[j][2]);
+          }
+          var mean = 0;
+          var max = 0;
+          var min = 9999999;
+          for(j=0;j<err.length;j++){
+            mean = mean+err[j];
+            if(err[j]>=max){
+              max = err[j];
+            }
+            if(err[j]<=min){
+              min = err[j];
+            }
+          }
+          console.log('Consumption');
+          console.log("Min: ");
+          console.log(min/1000);
+          console.log("Max: ");
+          console.log(max/1000);
+          mean = mean/err.length;
+
+          displayChart(arr2,'consumption', 'Power (Watts) (3 Jan 2010 - 9 Jan 2010)',mean/1000);
       });
       
   
@@ -166,13 +189,33 @@ function lol(){
 
 function lol2(){
   var arr2 = [];
+  var err = [];
     query2.once('value', (snapshot) => {
       var pre = snapshot.val().predicted;
       var act = snapshot.val().actual;
       for(var j=0;j<168;j++){
         arr2[arr2.length] = [j,pre[j],act[j]];
+        err[err.length] = Number([Math.abs(pre[j]-act[j])]);
       }
+      var mean = 0;
+      var max = 0;
+      var min = 9999999;
+      for(j=0;j<err.length;j++){
+        mean = mean+err[j];
+        if(err[j]>=max){
+          max = err[j];
+        }
+        if(err[j]<=min){
+          min = err[j];
+        }
+      }
+      console.log('Generation');
+      console.log("Min: ");
+      console.log(min/1000);
+      console.log("Max: ");
+      console.log(max/1000);
+      mean = mean/err.length;
 
-      displayChart1(arr2,'generation','Predicted vs Actual generation (GHI)');
+      displayChart1(arr2,'generation','GHI (W/m2) (24 March 2017 - 30 March 2017)',mean/1000);
     });
 }
