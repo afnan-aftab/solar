@@ -113,7 +113,33 @@ function initial(){
     });
   });
 
-  
+  var arr2 = [];
+  query4.limitToLast(100).once('value', (snapshot) => {
+    snapshot.forEach(function(childSnapshot){
+
+      var power = childSnapshot.val().power;
+      var day = childSnapshot.val().timestamp.day;
+      var date = childSnapshot.val().timestamp.date;
+      var time = childSnapshot.val().timestamp.time;
+      arr2[arr2.length]=[date+" "+time,power];
+    });
+    displayChart(arr2,'chart2', 'Appliance 2 Statistics')
+  });
+
+
+  var arr1 = [];
+    query3.limitToLast(100).once('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot){
+
+        var power = childSnapshot.val().power;
+        var day = childSnapshot.val().timestamp.day;
+        var date = childSnapshot.val().timestamp.date;
+        var time = childSnapshot.val().timestamp.time;
+        arr1[arr1.length]=[date+" "+time,power];
+      });
+      displayChart(arr1,'chart1', 'Appliance 1 Statistics')
+    });
+
 
 }
 // END Initial function ----------------------------->
@@ -152,6 +178,72 @@ document.getElementById('appl2_but').addEventListener('click',function(){
   });
 
 });
+
+/*document.getElementById('show_plot1').addEventListener('click',function(){
+  
+  var arr1 = [];
+    query3.limitToLast(100).once('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot){
+
+        var power = childSnapshot.val().power;
+        var day = childSnapshot.val().timestamp.day;
+        var date = childSnapshot.val().timestamp.date;
+        var time = childSnapshot.val().timestamp.time;
+        arr1[arr1.length]=[date+" "+time,power];
+      });
+    });
+
+  displayChart(arr1,'chart1', 'Appliance 1 Statistics')
+
+});
+
+
+document.getElementById('show_plot2').addEventListener('click',function(){
+  
+  var arr2 = [];
+    query4.limitToLast(100).once('value', (snapshot) => {
+      snapshot.forEach(function(childSnapshot){
+
+        var power = childSnapshot.val().power;
+        var day = childSnapshot.val().timestamp.day;
+        var date = childSnapshot.val().timestamp.date;
+        var time = childSnapshot.val().timestamp.time;
+        arr2[arr2.length]=[date+" "+time,power];
+      });
+    });
+    displayChart(arr2,'chart2', 'Appliance 2 Statistics')
+
+});*/
+
+function displayChart(arr,div,tit){
+  google.charts.load('current', {'packages':['scatter']});
+  google.charts.setOnLoadCallback(drawChart);
+
+  function drawChart () {
+
+    var data = new google.visualization.DataTable();
+    data.addColumn('string', 'Time');
+    data.addColumn('number', 'Power');
+
+    data.addRows(arr);
+
+    var options = {
+      width: 800,
+      height: 500,
+      chart: {
+        title: tit,
+        subtitle: 'Scatter Plot'
+      },
+      hAxis: {title: 'Date & Time'},
+      vAxis: {title: 'Power (Watts)'}
+    };
+
+    var chart = new google.charts.Scatter(document.getElementById(div));
+
+    chart.draw(data, google.charts.Scatter.convertOptions(options));
+  }
+}
+
 
 // load image in web page ---------------------->
 function load_img(path,id_div){
